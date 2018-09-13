@@ -6,9 +6,12 @@
 package javafxapplication2;
 
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -18,26 +21,37 @@ public class Reconocimiento {
     Scanner sc = new Scanner(System.in);
     String ExpRegular;
     Stack stackParentesis = new Stack();
+    Stack pilaPrioridad = new Stack();
     boolean isParentesis = false;
     boolean valid = true;
+    
     public Reconocimiento(){
         ExpRegular = sc.nextLine();
         ArrayList tokens = new ArrayList();
-        System.out.println(ExpRegular);
-        
+        String tokenAnterior = "";
         for(String c : ExpRegular.split("")){
-            tokens.add(reconocerToken(c));
+            tokens.add(reconocerToken(c,tokenAnterior));
+            tokenAnterior = c;
         }
-        if(valid){
+        if(!valid){
             System.out.println("No es valido");
+        }else{
+            Matcher m = Pattern.compile("\\(([^()]|(?R))*\\)").matcher(ExpRegular);
+            System.out.println("Division de parentesis");
+            while(m.find()) {
+                System.out.println(m.group(1));
+            }
         }
         
         System.out.println(tokens);
     }
-    public String reconocerToken(String token){
+    public String reconocerToken(String token,String tokenAnterior){
         switch(token){
             case "|":
-                return "op_|";
+                if(tokenAnterior.equals(token) ){
+                    valid = false;
+                }
+                    return "op_|";
             case "*":
                 return "op_*";
             case "+":
@@ -52,7 +66,7 @@ public class Reconocimiento {
             case ")":
                 try{
                     stackParentesis.pop();
-                }catch(NullPointerException e){
+                }catch(Exception e){
                     valid = false;
                 }
                 return "op_)";
@@ -62,11 +76,11 @@ public class Reconocimiento {
                 return token;
         }
     }
+    
     public void isExp(){
        
         if(!stackParentesis.isEmpty() && isParentesis){
-            valid = true;
+            valid = false;
         }
-        
     }
 }

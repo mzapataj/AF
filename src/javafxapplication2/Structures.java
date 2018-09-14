@@ -14,10 +14,10 @@ package javafxapplication2;
    node and key value*/
 class Node 
 { 
-    int key; 
+    String key; 
     Node left, right; 
   
-    public Node(int item) 
+    public Node(String item) 
     { 
         key = item; 
         left = right = null; 
@@ -31,7 +31,7 @@ class BinaryTree
     Node root; 
   
     // Constructors 
-    BinaryTree(int key) 
+    BinaryTree(String key) 
     { 
         root = new Node(key); 
     } 
@@ -46,7 +46,7 @@ class BinaryTree
         BinaryTree tree = new BinaryTree(); 
   
         /*create root*/
-        tree.root = new Node(1); 
+        tree.root = new Node("1"); 
   
         /* following is the tree after above statement 
   
@@ -54,8 +54,8 @@ class BinaryTree
             /   \ 
           null  null     */
   
-        tree.root.left = new Node(2); 
-        tree.root.right = new Node(3); 
+        tree.root.left = new Node("2"); 
+        tree.root.right = new Node("3"); 
   
         /* 2 and 3 become left and right children of 1 
                1 
@@ -65,7 +65,7 @@ class BinaryTree
         null null null null  */
   
   
-        tree.root.left.left = new Node(4); 
+        tree.root.left.left = new Node("4"); 
         /* 4 becomes left child of 2 
                     1 
                 /       \ 

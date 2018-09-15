@@ -22,13 +22,15 @@ import java.util.regex.Pattern;
  * @author mzapataj
  */
 public class Reconocimiento {
+    
     Scanner sc = new Scanner(System.in);
     String ExpRegular;
     ArrayList tokens = new ArrayList();
     Stack stackParentesis = new Stack();
+    List colaPrioridadIndex = new LinkedList();
     List colaPrioridad = new LinkedList();
-    ArrayList<Object> indexParIzq;
-    ArrayList<Object> indexParDer;
+    Stack indexParIzq;
+    Stack indexParDer;
     List<Object> terminos = new LinkedList<>();
     boolean isParentesis = false;
     boolean valid = true;
@@ -47,36 +49,17 @@ public class Reconocimiento {
         }else{
             try{
                 arbolSintax = new BinaryTree();
-                indexParIzq = new ArrayList<>();
-                indexParDer = new ArrayList<>();
-                getSubstringInParentheses();
+                indexParIzq = new Stack();
+                indexParDer = new Stack();
+                colaPrioridadIndex = getIndexOfParentheses();
                 System.out.println("Division de parentesis");
-                System.out.println(indexParDer);
-                System.out.println(indexParIzq);
-                for (int i = indexParDer.size()-1; i >= 0; i--) {
-                    terminos.add(tokens.subList((int)indexParDer.get(i)+1, (int)indexParIzq.get(i)));
-                    colaPrioridad.add(tokens.subList((int)indexParDer.get(i)+1, (int)indexParIzq.get(i)));
-                }
-              
-              colaPrioridad.add(tokens);
-              int indexSubList = findArray(tokens, (List)terminos.get(terminos.size()-1));
-              List auxlist =(List)colaPrioridad.get(colaPrioridad.size()-1);
-              colaPrioridad.remove(colaPrioridad.size()-1);
-               List newlist = new LinkedList();
-              for (int i = 0; i < auxlist.size(); i++) {
-              if (i==indexSubList) {
-                newlist.add("term_"+(terminos.size()-1));
-                List templist= (List)terminos.get(terminos.size()-1);
-                i=i+templist.size();
-              }
-                newlist.add(auxlist.get(i));
-              }
-              
-              colaPrioridad.add(newlist);
-                System.out.println(colaPrioridad);
+                System.out.println(colaPrioridadIndex);
+                generateTerms();
+                System.out.println(terminos);
             }catch(Exception e){
                 e.printStackTrace();
             }
+               
         }
         
         System.out.println(tokens);
@@ -112,23 +95,54 @@ public class Reconocimiento {
                 return token;
         }
     }
-    public void getSubstringInParentheses(){
+    
+    public List getIndexOfParentheses(){
+        List<List> result = new LinkedList();
+        
         int li = 0;
         int ls = tokens.size()-1;
-        
+        List aux = new LinkedList();
         while (li<=ls) {            
             if(tokens.get(li).equals("op_(")){
-                indexParDer.add(li);
+                indexParIzq.push(li);
             }
-            if(tokens.get(ls).equals("op_)")){
-               indexParIzq.add(ls);
+            if(tokens.get(li).equals("op_)")){
+                aux = new LinkedList();
+                aux.add(indexParIzq.pop());
+                aux.add(li);
+                result.add(aux);
             }
             li++;
-            ls--;
         }
+        aux = new LinkedList();
+        aux.add(0);
+        aux.add(tokens.size()-1);
+        result.add(aux);
+        return result;
     }
     public void generateTerms(){
-        for (int j = 0; j < 10; j++) {
+        
+        List laux = (List)colaPrioridadIndex.get(0);
+        terminos.add(tokens.subList((int)laux.get(0)+1, (int)laux.get(1)));
+        //colaPrioridad.add(terminos);
+        
+        for (int i = 1; i < colaPrioridadIndex.size(); i++) {
+            laux = (List)colaPrioridadIndex.get(i);
+            List laux2 = (List)colaPrioridadIndex.get(i-1);
+            List laux3 = new LinkedList();
+            
+            for (int j = (int)laux.get(0); j < (int)laux.get(1); j++) {
+                if ((int)laux2.get(0)==j) {
+                    laux3.add("term_"+(i-1));
+                    j = (int)laux2.get(1);
+                }else{
+                    laux3.add(tokens.get(j));
+                }
+            }
+            terminos.add(laux3);
+            //colaPrioridad.add(laux3);
+        }
+        /*for (int j = 0; j < 10; j++) {
             int indexSubList = findArray(tokens, (List)terminos.get(terminos.size()-1));
             List auxlist =(List)colaPrioridad.get(colaPrioridad.size()-1);
             colaPrioridad.remove(colaPrioridad.size()-1);
@@ -144,16 +158,16 @@ public class Reconocimiento {
               
             colaPrioridad.add(newlist);
         }
-        
+        */
     }
     void buildSintaxTree(){
-        for (int i = indexParDer.size()-1; i >= 0; i--) {
-            terminos.add(tokens.subList((int)indexParDer.get(i)+1, (int)indexParIzq.get(i)));
-            colaPrioridad.add(terminos.get(indexParDer.size()-1-i));
+        for (int i = indexParIzq.size()-1; i >= 0; i--) {
+            terminos.add(tokens.subList((int)indexParIzq.get(i)+1, (int)indexParDer.get(i)));
+            colaPrioridad.add(terminos.get(indexParIzq.size()-1-i));
         }
         colaPrioridad.add(tokens);
         
-        int n = indexParDer.size()-1;
+        int n = indexParIzq.size()-1;
         Node ptr = new Node(null);
         for (int i = 0; i < n; i++) {
             LinkedList aux = (LinkedList) colaPrioridad.get(i);

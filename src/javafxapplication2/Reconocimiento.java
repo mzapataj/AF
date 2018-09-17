@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -41,7 +42,7 @@ public class Reconocimiento {
     public Reconocimiento(){
         ExpRegular = sc.nextLine();
         String tokenAnterior = "";
-        if (!"(".equals(ExpRegular.substring(0, 1)) && !")".equals(ExpRegular.substring(ExpRegular.length()-1, ExpRegular.length()))) {
+        if (!"(".equals(ExpRegular.substring(0, 1)) || !")".equals(ExpRegular.substring(ExpRegular.length()-1, ExpRegular.length()))) {
             ExpRegular = "(" + ExpRegular;
             ExpRegular = ExpRegular + ")";
         }
@@ -120,6 +121,7 @@ public class Reconocimiento {
         }
         return result;
     }
+    
     public void generateTerms(){
         
         List laux = (List)colaPrioridadIndex.get(0);
@@ -224,9 +226,22 @@ public class Reconocimiento {
                     
                 }
             }
+            eliminarElemento(teraux2, "");
             teraux.set(i, teraux2);
+           
         } 
         terminos = teraux;
+    }
+    
+    public void eliminarElemento(List ls,String s){
+        Iterator<String> iter = ls.iterator();
+        
+        while (iter.hasNext()) {            
+            String str = iter.next();
+            if (s.equals(str)) {
+                iter.remove();
+            }
+        }
     }
     /* Function to sort an array using insertion sort*/
     void SortByLeastIndex(final List ls, int n)

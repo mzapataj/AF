@@ -32,8 +32,8 @@ public class JavaFXApplication2 extends Application {
      */
     public static void main(String[] args) {
         //launch(args);
-        Reconocimiento reconocimiento;
-        reconocimiento = new Reconocimiento();
+        Thompson thompson = new Thompson();
+        thompson.calculateAFN();
     }
     
 }

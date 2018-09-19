@@ -35,11 +35,12 @@ public class Reconocimiento {
     Stack indexParIzq;
     Stack indexParDer;
     List<Object> terminos = new LinkedList<>();
-    boolean isParentesis = false;
+    //boolean isParentesis = false;
     boolean valid = true;
-    BinaryTree arbolSintax;
+//    BinaryTree arbolSintax;
     
     public Reconocimiento(){
+        System.out.println("Escriba su expresión regular:");
         ExpRegular = sc.nextLine();
         String tokenAnterior = "";
         if (!"(".equals(ExpRegular.substring(0, 1)) || !")".equals(ExpRegular.substring(ExpRegular.length()-1, ExpRegular.length()))) {
@@ -54,7 +55,7 @@ public class Reconocimiento {
             System.out.println("No es valido");
         }else{
             try{
-                arbolSintax = new BinaryTree();
+////                arbolSintax = new BinaryTree();
                 indexParIzq = new Stack();
                 indexParDer = new Stack();
                 colaPrioridadIndex = getIndexOfParentheses();
@@ -65,6 +66,7 @@ public class Reconocimiento {
             }catch(Exception e){
                 e.printStackTrace();
             }
+            
         }
         System.out.println(tokens);
     }
@@ -82,8 +84,8 @@ public class Reconocimiento {
                 return "op_+";
             case "?":
                 return "op_?";
-            case "ε":
-                return "ε";
+            case "∈":
+                return "∈";
             case "(": 
                stackParentesis.push(true);
                 return "op_(";
@@ -275,39 +277,39 @@ public class Reconocimiento {
     }
     
     
-    void buildSintaxTree(){
-        for (int i = indexParIzq.size()-1; i >= 0; i--) {
-            terminos.add(tokens.subList((int)indexParIzq.get(i)+1, (int)indexParDer.get(i)));
-            colaPrioridad.add(terminos.get(indexParIzq.size()-1-i));
-        }
-        colaPrioridad.add(tokens);
-        
-        int n = indexParIzq.size()-1;
-        Node ptr = new Node(null);
-        for (int i = 0; i < n; i++) {
-            LinkedList aux = (LinkedList) colaPrioridad.get(i);
-            for (int j = 0; j < aux.size(); j++) {
-                String cadaux = (String) aux.get(j);
-                /*if(cadaux.length() >1){
-                    
-                }
-                */
-                ptr = arbolSintax.root;
-                arbolSintax.root = new Node(cadaux); 
-                arbolSintax.root.left = ptr;
-            }
-        }
-        
-        
-    }
-    public static int findArray(List array, List subArray)
+//    void buildSintaxTree(){
+//        for (int i = indexParIzq.size()-1; i >= 0; i--) {
+//            terminos.add(tokens.subList((int)indexParIzq.get(i)+1, (int)indexParDer.get(i)));
+//            colaPrioridad.add(terminos.get(indexParIzq.size()-1-i));
+//        }
+//        colaPrioridad.add(tokens);
+//        
+//        int n = indexParIzq.size()-1;
+//        Node ptr = new Node(null);
+//        for (int i = 0; i < n; i++) {
+//            LinkedList aux = (LinkedList) colaPrioridad.get(i);
+//            for (int j = 0; j < aux.size(); j++) {
+//                String cadaux = (String) aux.get(j);
+//                /*if(cadaux.length() >1){
+//                    
+//                }
+//                */
+//                ptr = arbolSintax.root;
+//                arbolSintax.root = new Node(cadaux); 
+//                arbolSintax.root.left = ptr;
+//            }
+//        }
+//        
+//        
+//    }    
+public static int findArray(List array, List subArray)
     {
         return Collections.indexOfSubList((List)array,(List)subArray);
     }
 
     public void isExp(){
        
-        if(!stackParentesis.isEmpty() && isParentesis){
+        if(!stackParentesis.isEmpty()){
             valid = false;
         }
     }

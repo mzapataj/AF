@@ -36,13 +36,15 @@ public class Thompson {
             afn.n++;
             
             
+            String op_ant = "";
             for (int i = 0; i < n; i++) {
                 String s = (String)term.get(i);
                 switch(s){
                     case("op_|"):
                         String ants = (String)term.get(i-1);
-                        if (ants.length()>1) {
-                            Union();
+                        if (ants.length()==1) {
+                            Union(subgraph);
+                            op_ant = "op_|";
                         }else{
                             
                         }
@@ -58,9 +60,16 @@ public class Thompson {
                         
                     break;
                     default:
+                        if (op_ant.equals("op_|")) {
+                            Edge edg = currentVertex.busquedaArista(null);
+                            currentVertex = new Vertex(afn.n);
+                            afn.n++;
+                            edg.setDestino(currentVertex);
+                            op_ant = "";
+                        }
                         if (s.length() == 1) {
                             Concatenacion(s);
-                        }else{
+                        } else {
                             String c = s.substring(7);
                             int index = Integer.valueOf(c);
                             Concatenacion(subgrafos.get(index));
@@ -72,9 +81,10 @@ public class Thompson {
         }
     }
     
-    public void Union(){
+    private void Union(Graph g){
+        
         Vertex subinicio = afn.createVertex(afn.n);
-        Vertex subfinal = afn.createVertex(afn.n);
+        Vertex subfin = afn.createVertex(afn.n);
         
         Edge aristaAnt = currentVertex.antVertex.busquedaArista(currentVertex);
         Edge arista1 = new Edge("∈");
@@ -84,20 +94,22 @@ public class Thompson {
         
         subinicio.aristas.add(arista1);
         subinicio.aristas.add(arista2);
+        arista1.setDestino(currentVertex.antVertex);
+        currentVertex = subinicio;
+        g.puntoPartida = subinicio;
         
-        arista1.setDestino(currentVertex);
-    
-    }
-    
-    public void CerraduraPositiva(String s){
         
     }
     
-    public void CerraduraKleene(String s){
+    private void CerraduraPositiva(String s){
+        
+    }
+    
+    private void CerraduraKleene(String s){
         CerraduraPositiva(s);
     }
     
-    public void Concatenacion(String s){
+    private void Concatenacion(String s){
        Edge arista = new Edge(s);
        currentVertex.aristas.add(arista);
        Vertex antV = currentVertex;
@@ -106,9 +118,11 @@ public class Thompson {
        arista.setDestino(currentVertex);
        currentVertex.antVertex = antV;
     }
+    
     public void Concatenacion(Graph g){
         Edge edg = currentVertex.antVertex.busquedaArista(currentVertex);
         edg.setDestino(g.puntoPartida);
+        afn.n--;
         currentVertex = g.fin;
     }
 }

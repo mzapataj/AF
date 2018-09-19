@@ -67,10 +67,17 @@ class Graph{
             value = index;
             aristas = new ArrayList<>();
         }
-        public Edge busquedaArista(Vertex v){
+
+        public Edge busquedaArista(Vertex v) {
             for (Edge arist : aristas) {
-                if (arist.getDestino().equals(v)) {
-                    return arist;
+                if (v != null) {
+                    if (arist.getDestino().equals(v)) {
+                        return arist;
+                    }
+                } else {
+                    if (v == arist.destino) {
+                        return arist;
+                    }
                 }
             }
             return null;

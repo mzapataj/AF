@@ -6,6 +6,8 @@
 package javafxapplication2;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -61,13 +63,14 @@ class Graph{
     {
         int value;
         ArrayList<Edge> aristas;
-        Vertex antVertex;
+        List<Vertex> antVertex;
         
         public Vertex(int index){
             value = index;
             aristas = new ArrayList<>();
+            antVertex = new LinkedList<>();
         }
-
+        
         public Edge busquedaArista(Vertex v) {
             for (Edge arist : aristas) {
                 if (v != null) {

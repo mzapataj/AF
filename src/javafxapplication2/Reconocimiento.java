@@ -74,17 +74,39 @@ public class Reconocimiento {
     public String reconocerToken(String token,String tokenAnterior){
         switch(token){
             case "|":
-                if(tokenAnterior.equals(token) ){
-                    valid = false;
-                }
+                if (tokenAnterior.equals("\\")) {
+                     tokens.remove(tokens.size()-1);
+                    return "|";
+                } else {
+                    if (tokenAnterior.equals(token)) {
+                        valid = false;
+                    }
                     return "op_|";
+                }
             case "*":
-                return "op_*";
+                if (tokenAnterior.equals("\\")) {
+                     tokens.remove(tokens.size()-1);
+                    return "*";
+                } else {
+
+                    return "op_*";
+                }
             case "+":
+                if (tokenAnterior.equals("\\")) {
+                     tokens.remove(tokens.size()-1);
+                    return "+";
+                }else{
+                    
                 return "op_+";
+                }
             case "?":
-                return "op_?";
-            case "∈":
+                if (tokenAnterior.equals("\\")) {
+                     tokens.remove(tokens.size()-1);
+                    return "?";
+                }else{
+                    return "op_?";
+                }
+                case "∈":
                 return "∈";
             case "(": 
                stackParentesis.push(true);
@@ -96,10 +118,15 @@ public class Reconocimiento {
                     valid = false;
                 }
                 return "op_)";
-            case "\"":
-                return "op_\"";
+            case "\\":
+                return "op_\\";
             default:
-                return token;
+                if (tokenAnterior.equals("\\")) {
+                    tokens.set(tokens.size()-1, "\\");
+                }
+                    return token;
+                
+                
         }
     }
     

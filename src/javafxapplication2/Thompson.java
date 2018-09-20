@@ -6,6 +6,7 @@
 package javafxapplication2;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -17,6 +18,8 @@ public class Thompson {
     ArrayList<List> listaTransicion = new ArrayList();
     ArrayList<Graph> subgrafos = new ArrayList<>();
     
+    ArrayList<List> matrizTransicion = new ArrayList<>();
+    
     Graph afn;
     Vertex currentVertex; 
     
@@ -24,8 +27,56 @@ public class Thompson {
     public Thompson(){
         afn = new Graph();
         currentVertex = afn.puntoPartida;
+        
+    }
+    public void calculateAFN(){
+         for ( Object obj : reconocimiento.terminos) {
+            
+            List term = (List) obj;
+            int n = term.size();
+           
+            for (int i = 0; i < n; i++) {
+                String s = (String)term.get(i);
+                switch(s){
+                    case("op_|"):
+                   
+                    break;
+                    case("op_*"):
+                        
+                    break;
+                    case("op_+"):
+                    break;
+                    case("op_?"):
+                        
+                    break;
+                    default:
+                        concat(s);
+                }
+            }
+        }
+    }
+    public void union(){
+        
+    }
+    public void concat(String s){
+              
     }
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /*
     public void calculateAFN(){
         for ( Object obj : reconocimiento.terminos) {
             
@@ -43,7 +94,7 @@ public class Thompson {
                     case("op_|"):
                         String ants = (String)term.get(i-1);
                         if (ants.length()==1) {
-                            Union(subgraph);
+                            //Union(subgraph);
                             op_ant = "op_|";
                         }else{
                             
@@ -81,16 +132,21 @@ public class Thompson {
         }
     }
     
+  
     private void Union(Graph g){
         
         Vertex subinicio = afn.createVertex(afn.n);
         Vertex subfin = afn.createVertex(afn.n);
         
-        Edge aristaAnt = currentVertex.antVertex.busquedaArista(currentVertex);
+        if (currentVertex.antVertex.get(0).antVertex != null) {
+            Edge aristaAnt = currentVertex.antVertex.antVertex.busquedaArista(currentVertex.antVertex);
+            aristaAnt.setDestino(subinicio);
+        
+        }
+        
         Edge arista1 = new Edge("∈");
         Edge arista2 = new Edge("∈");
         
-        aristaAnt.setDestino(subinicio);
         
         subinicio.aristas.add(arista1);
         subinicio.aristas.add(arista2);
@@ -116,13 +172,16 @@ public class Thompson {
        currentVertex = new Vertex(afn.n);
        afn.n++;
        arista.setDestino(currentVertex);
-       currentVertex.antVertex = antV;
+       currentVertex.antVertex.add(antV);
     }
     
     public void Concatenacion(Graph g){
-        Edge edg = currentVertex.antVertex.busquedaArista(currentVertex);
-        edg.setDestino(g.puntoPartida);
+        List aristAnt = new LinkedList();
+        for (Vertex v : currentVertex.antVertex) {
+            v.busquedaArista(currentVertex).setDestino(g.puntoPartida);
+        }
         afn.n--;
         currentVertex = g.fin;
     }
+    */
 }

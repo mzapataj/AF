@@ -28,13 +28,23 @@ public class Reconocimiento {
     
     Scanner sc = new Scanner(System.in);
     String ExpRegular;
-    ArrayList tokens = new ArrayList();
+    ArrayList<String> tokens = new ArrayList();
     Stack stackParentesis = new Stack();
     List colaPrioridadIndex = new LinkedList();
     List colaPrioridad = new LinkedList();
     Stack indexParIzq;
     Stack indexParDer;
     List<Object> terminos = new LinkedList<>();
+    List alfabeto = new LinkedList<Object>();
+
+    public List getAlfabeto() {
+        for(String s: tokens){
+            if (!alfabeto.contains(s) && s.length() == 1) {
+               alfabeto.add(s);
+            }
+        }
+        return alfabeto;
+    }
     //boolean isParentesis = false;
     boolean valid = true;
 //    BinaryTree arbolSintax;
@@ -63,6 +73,7 @@ public class Reconocimiento {
                 System.out.println(colaPrioridadIndex);
                 OrdenOperaciones();
                 System.out.println(terminos);
+                System.out.println("Alfabeto: "+getAlfabeto());
             }catch(Exception e){
                 e.printStackTrace();
             }

@@ -43,16 +43,16 @@ class Graph{
     public Graph(){
         vertices = new ArrayList<>();
         aristas = new ArrayList<>();
-        puntoPartida = new Vertex(0);
+        puntoPartida = new Vertex(0,0);
     }
     
     public Graph(int inicio){
         vertices = new ArrayList<>();
         aristas = new ArrayList<>();
-        puntoPartida = createVertex(inicio);
+        puntoPartida = createVertex(inicio,0);
     }
-    public Vertex createVertex(int index){
-        Vertex v = new Vertex(index);
+    public Vertex createVertex(int index, int tipo){
+        Vertex v = new Vertex(index,tipo);
         vertices.add(v);
         n++;
         return v;
@@ -64,11 +64,13 @@ class Graph{
         int value;
         ArrayList<Edge> aristas;
         List<Vertex> antVertex;
+        int type; //0: Normal, 1: Inicio de union
         
-        public Vertex(int index){
+        public Vertex(int index,int type){
             value = index;
             aristas = new ArrayList<>();
             antVertex = new LinkedList<>();
+            this.type = type;
         }
         
         public Edge busquedaArista(Vertex v) {

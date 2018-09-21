@@ -33,6 +33,7 @@ public class JavaFXApplication2 extends Application {
     public static void main(String[] args) {
         //launch(args);
         Thompson thompson = new Thompson();
+        thompson.calculateAFN();
     }
     
 }

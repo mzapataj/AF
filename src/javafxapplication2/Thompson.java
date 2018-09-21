@@ -22,13 +22,14 @@ public class Thompson {
     
     Graph afn;
     Vertex currentVertex; 
+    Vertex antCurrentVertex; 
     
     
     public Thompson(){
         afn = new Graph();
         currentVertex = afn.puntoPartida;
-        
     }
+    /*
     public void calculateAFN(){
          for ( Object obj : reconocimiento.terminos) {
             
@@ -61,23 +62,15 @@ public class Thompson {
     public void concat(String s){
               
     }
+    */
+   
+     
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    /*
     public void calculateAFN(){
+        
+        String ants = "";
         for ( Object obj : reconocimiento.terminos) {
             
             List term = (List) obj;
@@ -86,74 +79,95 @@ public class Thompson {
             currentVertex = subgraph.puntoPartida;
             afn.n++;
             
-            
             String op_ant = "";
             for (int i = 0; i < n; i++) {
                 String s = (String)term.get(i);
-                switch(s){
-                    case("op_|"):
-                        String ants = (String)term.get(i-1);
-                        if (ants.length()==1) {
-                            //Union(subgraph);
+                if (!s.equals(ants) || !s.substring(0, 6).equals("parent")) {
+                    switch (s) {
+                        case ("op_|"):
+                            Union(subgraph, term, i);
                             op_ant = "op_|";
-                        }else{
+                            i++;
+
+                            break;
+                        case ("op_*"):
+                            CerraduraKleene(s);
+                            break;
+                        case ("op_+"):
+                            CerraduraPositiva(s);
+                            break;
+                        case ("op_?"):
+
+                            break;
+                        default:
+                            if (op_ant.equals("op_|")) {
+                                /*    currentVertex.aristas.get(1).setDestino(currentVertex);
                             
-                        }
-                        
-                    break;
-                    case("op_*"):
-                        CerraduraKleene(s);
-                    break;
-                    case("op_+"):
-                        CerraduraPositiva(s);
-                    break;
-                    case("op_?"):
-                        
-                    break;
-                    default:
-                        if (op_ant.equals("op_|")) {
-                            Edge edg = currentVertex.busquedaArista(null);
-                            currentVertex = new Vertex(afn.n);
-                            afn.n++;
-                            edg.setDestino(currentVertex);
                             op_ant = "";
-                        }
-                        if (s.length() == 1) {
+                                 */
+                            }
                             Concatenacion(s);
-                        } else {
-                            String c = s.substring(7);
-                            int index = Integer.valueOf(c);
-                            Concatenacion(subgrafos.get(index));
-                        }
+                    }
                 }
+                
+                ants = s;
             }
             subgraph.fin = currentVertex;
             subgrafos.add(subgraph);
         }
     }
     
-  
-    private void Union(Graph g){
+  /*
+    a | b
+    */
+    private void Union(Graph g, List term, int i){
+        //a
+        Vertex subinicio = afn.createVertex(afn.n,1);
+        Vertex subfin = afn.createVertex(afn.n,1);
+
+        Edge aristaInicio1 = new Edge("∈");
+        Edge aristaInicio2 = new Edge("∈");
+        Edge aristaFin1 = new Edge("∈");
+        Edge aristaFin2 = new Edge("∈");
         
-        Vertex subinicio = afn.createVertex(afn.n);
-        Vertex subfin = afn.createVertex(afn.n);
         
-        if (currentVertex.antVertex.get(0).antVertex != null) {
-            Edge aristaAnt = currentVertex.antVertex.antVertex.busquedaArista(currentVertex.antVertex);
-            aristaAnt.setDestino(subinicio);
+        subinicio.aristas.add(aristaInicio1);
+        subinicio.aristas.add(aristaInicio2);
         
+        currentVertex.aristas.add(aristaFin1);
+        aristaFin1.setDestino(subfin);
+        
+        if (antCurrentVertex.type == 0) {
+   
+            aristaInicio1.setDestino(antCurrentVertex);
+            
+        
+            //b
+            String b = (String) term.get(i + 1);
+            
+            g.puntoPartida = subinicio;
+
+            if (b.length() == 1) {
+                
+                currentVertex = afn.createVertex(afn.n, 0);
+                aristaInicio2.setDestino(currentVertex);
+                Concatenacion(b);
+                currentVertex.aristas.add(aristaFin2);
+                aristaFin2.setDestino(subfin);
+            }else{
+                String c = b.substring(7);
+                int index = Integer.valueOf(c);
+                Graph parent_index = subgrafos.get(index);
+                antCurrentVertex = parent_index.puntoPartida;
+                currentVertex = parent_index.fin; 
+                aristaInicio2.setDestino(antCurrentVertex);
+                currentVertex.aristas.add(aristaFin2);
+                aristaFin2.setDestino(subfin);
+            }
+            currentVertex = subfin;
+            antCurrentVertex = subinicio;
+                
         }
-        
-        Edge arista1 = new Edge("∈");
-        Edge arista2 = new Edge("∈");
-        
-        
-        subinicio.aristas.add(arista1);
-        subinicio.aristas.add(arista2);
-        arista1.setDestino(currentVertex.antVertex);
-        currentVertex = subinicio;
-        g.puntoPartida = subinicio;
-        
         
     }
     
@@ -166,22 +180,26 @@ public class Thompson {
     }
     
     private void Concatenacion(String s){
-       Edge arista = new Edge(s);
-       currentVertex.aristas.add(arista);
-       Vertex antV = currentVertex;
-       currentVertex = new Vertex(afn.n);
-       afn.n++;
-       arista.setDestino(currentVertex);
-       currentVertex.antVertex.add(antV);
-    }
-    
-    public void Concatenacion(Graph g){
-        List aristAnt = new LinkedList();
-        for (Vertex v : currentVertex.antVertex) {
-            v.busquedaArista(currentVertex).setDestino(g.puntoPartida);
+        if (s.length() == 1) {
+            Edge arista = new Edge(s);
+            currentVertex.aristas.add(arista);
+            Vertex antV = currentVertex;
+            currentVertex = new Vertex(afn.n, 0);
+            afn.n++;
+            arista.setDestino(currentVertex);
+            currentVertex.antVertex.add(antV);
+            antCurrentVertex = antV;
+        }else{
+            String c = s.substring(7);
+            int index = Integer.valueOf(c);
+            Graph g = subgrafos.get(index);
+            List aristAnt = new LinkedList();
+            for (Vertex v : currentVertex.antVertex) {
+                v.busquedaArista(currentVertex).setDestino(g.puntoPartida);
+            }
+            afn.n--;
+            antCurrentVertex = g.puntoPartida;
+            currentVertex = g.fin;                
         }
-        afn.n--;
-        currentVertex = g.fin;
     }
-    */
 }

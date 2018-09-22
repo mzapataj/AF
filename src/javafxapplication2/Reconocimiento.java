@@ -53,10 +53,15 @@ public class Reconocimiento {
         System.out.println("Escriba su expresión regular:");
         ExpRegular = sc.nextLine();
         String tokenAnterior = "";
-        if (!"(".equals(ExpRegular.substring(0, 1)) || !")".equals(ExpRegular.substring(ExpRegular.length()-1, ExpRegular.length()))) {
+        /* if (!"(".equals(ExpRegular.substring(0, 1)) || !")".equals(ExpRegular.substring(ExpRegular.length()-1, ExpRegular.length()))) {
             ExpRegular = "(" + ExpRegular;
             ExpRegular = ExpRegular + ")";
         }
+        */
+        
+        ExpRegular = "(" + ExpRegular;
+        ExpRegular = ExpRegular + ")";
+       
         for(String c : ExpRegular.split("")){
             tokens.add(reconocerToken(c,tokenAnterior));
             tokenAnterior = c;
@@ -159,6 +164,14 @@ public class Reconocimiento {
             }
             li++;
         }
+        
+        List posibleLastIndex = new LinkedList<Object>();
+        posibleLastIndex.add(0);posibleLastIndex.add(tokens.size()-1);
+        
+        if (!result.contains(posibleLastIndex)) {
+            result.add(posibleLastIndex);
+        }
+        
         return result;
     }
     

@@ -137,18 +137,28 @@ public class Thompson {
         currentVertex.aristas.add(aristaFin1);
         aristaFin1.setDestino(subfin);
         
+        
         if (antCurrentVertex.type == 0) {
-   
-            aristaInicio1.setDestino(antCurrentVertex);
-            
         
             //b
             String b = (String) term.get(i + 1);
             
-            g.puntoPartida = subinicio;
-
+            if (antCurrentVertex==g.puntoPartida) {
+                g.puntoPartida = subinicio;
+            }else{
+                for (Vertex elem : antCurrentVertex.antVertex){
+                    
+                    for(Edge edg : elem.aristas){
+                        if (!"∈".equals(elem.aristas.get(elem.aristas.indexOf(edg)).value)) {
+                            edg.setDestino(subinicio);
+                        }
+                    }
+                }
+            }
+            
+            aristaInicio1.setDestino(antCurrentVertex);
+            
             if (b.length() == 1) {
-                
                 currentVertex = afn.createVertex(afn.n, 0);
                 aristaInicio2.setDestino(currentVertex);
                 Concatenacion(b);
@@ -198,7 +208,13 @@ public class Thompson {
                 v.busquedaArista(currentVertex).setDestino(g.puntoPartida);
             }
             afn.n--;
+            Vertex antCVaux = antCurrentVertex;
             antCurrentVertex = g.puntoPartida;
+            
+            antCurrentVertex.antVertex.clear();
+            antCurrentVertex.antVertex.add(antCVaux);
+            
+            
             currentVertex = g.fin;                
         }
     }
